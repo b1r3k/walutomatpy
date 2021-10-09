@@ -1,0 +1,20 @@
+{
+  "orderId": "2035e361-e672-457a-9c3c-0e86e5ff54d6",
+  "submitId": "916f1f98-01f6-412a-85e7-2482f1f4c112",
+  "submitTs": "2018-02-02T10:06:01.111Z",
+  "updateTs": "2018-02-02T10:06:01.396Z",
+  "status": "ACTIVE",
+  "completion": 67,
+  "currencyPair": "EURPLN",
+  "buySell": "BUY",
+  "volume": "999.00",
+  "volumeCurrency": "EUR",
+  "limitPrice": "4.2321",
+  "soldAmount": "999.00",
+  "soldCurrency": "EUR",
+  "boughtAmount": "999.00",
+  "boughtCurrency": "EUR",
+  "commissionAmount": "9.00",
+  "commissionCurrency": "EUR",
+  "commissionRate": "0.0020"
+}

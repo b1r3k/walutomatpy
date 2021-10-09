@@ -36,6 +36,7 @@ parts
 pyvenv
 sources
 var/*
+temp/*
 venv
 virtualenv.py
 .install-cython

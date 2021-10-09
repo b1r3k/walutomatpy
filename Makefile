@@ -4,11 +4,11 @@ PYTHON=venv/bin/python3
 PIP=venv/bin/pip
 NOSE=venv/bin/nosetests
 FLAKE=venv/bin/flake8
-FLAGS=--with-coverage --cover-inclusive --cover-erase --cover-package=src --cover-min-percentage=50
+FLAGS=--with-coverage --cover-inclusive --cover-erase --cover-package=src --cover-min-percentage=47
 
 
 update:
-	$(PIP) install -U .
+	$(PYTHON) setup.py develop
 
 env:
 	test -d venv || python3 -m venv venv
@@ -19,7 +19,7 @@ remove-env:
 force-env: remove-env env
 
 install: env
-	$(PIP) install .
+	$(PYTHON) setup.py develop
 
 reinstall: force-env install
 
@@ -30,7 +30,7 @@ test: flake
 	$(NOSE) -s $(FLAGS)
 
 testloop:
-	while sleep 1; do $(NOSE) -s $(FLAGS); done
+	watch -n 3 $(NOSE) -x -s $(FLAGS)
 
 cov cover coverage:
 	$(NOSE) -s --with-cover --cover-html --cover-html-dir ./coverage $(FLAGS)
