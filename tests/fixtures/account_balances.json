@@ -1,0 +1,20 @@
+[
+  {
+    "currency": "EUR",
+    "balanceTotal": "300.33",
+    "balanceAvailable": "200",
+    "balanceReserved": "0.00"
+  },
+  {
+    "currency": "PLN",
+    "balanceTotal": "170.34",
+    "balanceAvailable": "150",
+    "balanceReserved": "0.00"
+  },
+  {
+    "currency": "USD",
+    "balanceTotal": "1.28",
+    "balanceAvailable": "1",
+    "balanceReserved": "0.00"
+  }
+]
