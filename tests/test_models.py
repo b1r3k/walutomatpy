@@ -1,4 +1,5 @@
 import unittest
+from decimal import Decimal
 
 from . import read_fixture
 
@@ -22,3 +23,4 @@ class TestAccountBalances(unittest.TestCase):
     def test_account_balances_testing(self):
         raw_balance = read_fixture('account_balances.json')
         balances = AccountBalances(raw_balance)
+        self.assertEqual(balances[OrderCurrencyEnum.EUR].total, Decimal('300.33'))
