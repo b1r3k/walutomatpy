@@ -45,3 +45,16 @@ class OrderCurrencyPair:
 
     def __str__(self):
         return f'{str(self.base)}{str(self.counter)}'
+
+
+@dataclass
+class Offer:
+    price: float
+    volume: float
+
+    def __init__(self, price, volume):
+        self.price = float(price)
+        self.volume = float(volume)
+
+    def __str__(self):
+        return f'{self.price:10.5}@{self.volume:10.6}'
