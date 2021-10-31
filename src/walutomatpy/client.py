@@ -44,18 +44,23 @@ class WalutomatApiException(Exception):
 
 class WalutomatClient:
 
-    def __init__(self, api_key, private_key, base_url='api.walutomat.pl', dryRun=False):
+    def __init__(self, api_key, private_key, max_retry=0, base_url='api.walutomat.pl', dryRun=False):
         self._api_key = api_key
         self._raw_private_key = private_key
         self._base_url = base_url
         self._private_key = None
         self._session = None
         self._dryRun = dryRun
+        self._max_retry = max_retry
 
     @property
     def session(self):
         if self._session is None:
             self._session = requests.Session()
+            if self._max_retry > 0:
+                adapter = requests.adapters.HTTPAdapter(max_retries=self._max_retry)
+                self._session.mount('http://', adapter)
+                self._session.mount('https://', adapter)
             self._session.headers.update({
                 'X-API-Key': self._api_key,
                 'Content-Type': 'application/x-www-form-urlencoded'
