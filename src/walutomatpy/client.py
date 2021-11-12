@@ -44,7 +44,7 @@ class WalutomatApiException(Exception):
 
 class WalutomatClient:
 
-    def __init__(self, api_key, private_key, max_retry=0, base_url='api.walutomat.pl', dryRun=False):
+    def __init__(self, api_key, private_key, *, max_retry=0, base_url='api.walutomat.pl', dryRun=False):
         self._api_key = api_key
         self._raw_private_key = private_key
         self._base_url = base_url

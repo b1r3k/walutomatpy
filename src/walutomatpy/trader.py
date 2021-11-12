@@ -41,6 +41,10 @@ class WalutomatTrader:
     def __init__(self, client: WrappedWalutomatClient):
         self._client = client
 
+    def get_order_by_id(self, order_id):
+        orders = self._client.get_p2p_order_by_id(order_id)
+        return orders[0]
+
     def issue_order(self,
                     order_type: OrderTypeEnum,
                     currency_pair: OrderCurrencyPair,
@@ -51,8 +55,11 @@ class WalutomatTrader:
         walutomat_order_id = self._client.submit_p2p_order(str(order_id), currency_pair, order_type, volume,
                                                            volume_currency,
                                                            price_limit)
-        orders = self._client.get_p2p_order_by_id(walutomat_order_id)
+        orders = self.get_order_by_id(walutomat_order_id)
         return orders
+
+    def get_account_balances(self):
+        return self._client.get_account_balances()
 
     def sell_all_balance(self, currency_pair: OrderCurrencyPair, currency: OrderCurrencyEnum, price_limit) -> \
             WalutomatOrder:
@@ -83,19 +90,21 @@ class WalutomatTrader:
     def cancel(self, order_id):
         self._client.cancel_p2p_order(order_id)
 
-    def is_order_executed(self, order_id):
-        orders = self._client.get_p2p_order_by_id(order_id)
-        return all(order.is_executed() for order in orders)
+    def wait_to_fill_order(self, order_id, update_delay=10):
+        while True:
+            order = self.get_order_by_id(order_id)
+            if order.is_executed():
+                return True
+            time.sleep(update_delay)
 
-    def get_best_price_per_volume(self, pair: OrderCurrencyPair, volume: int, delay=30):
-        item_limit = 10
+    def get_best_price_per_volume(self, pair: OrderCurrencyPair, volume: int, *, item_limit=10):
         retry = 3
         while retry:
             bids, asks = self._client.get_p2p_best_offers_detailed(pair, item_limit)
             try:
                 best_bid = get_price_by_volume(bids, volume)
                 best_ask = get_price_by_volume(asks, volume)
-                yield best_bid, best_ask
+                return best_bid, best_ask
             except MissingVolume:
                 # fetch 20% more orders to get enough volume
                 item_limit = math.ceil(1.2 * item_limit)
