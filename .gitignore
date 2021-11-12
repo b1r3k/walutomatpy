@@ -50,3 +50,4 @@ virtualenv.py
 .mypy_cache
 pip-wheel-metadata
 *.iml
+secrets/
