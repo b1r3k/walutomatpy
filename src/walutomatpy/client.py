@@ -7,6 +7,8 @@ from pprint import pformat
 import requests
 from OpenSSL import crypto
 
+from .logger import logger
+
 
 class WalutomatApiException(Exception):
     def __init__(self, request, error_response):
@@ -52,6 +54,8 @@ class WalutomatClient:
         self._session = None
         self._dryRun = dryRun
         self._max_retry = max_retry
+        logger.debug(f'Dry run mode: {self._dryRun}')
+        logger.debug(f'Max retries: {self._max_retry}')
 
     @property
     def session(self):

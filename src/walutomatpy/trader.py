@@ -1,7 +1,7 @@
 import time
 import uuid
 from decimal import Decimal
-from typing import List
+from typing import List, Iterator
 import math
 
 from .models.enums import OrderTypeEnum, OrderCurrencyPair, OrderCurrencyEnum
@@ -111,3 +111,7 @@ class WalutomatTrader:
                 retry -= 1
                 continue
         raise RetryError()
+
+    def get_active_orders(self) -> Iterator[WalutomatOrder]:
+        for order in self._client.get_p2p_active_orders():
+            yield order
