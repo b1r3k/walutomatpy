@@ -2,10 +2,12 @@ from dataclasses import dataclass, fields, asdict
 from decimal import Decimal
 from datetime import datetime
 
+from dateutil.parser import isoparse
+
 from .enums import OrderTypeEnum, OrderCurrencyPair, OrderCurrencyEnum, OrderStatusEnum
 
 
-# '2018-02-02T10:06:01.111Z'
+# 2022-08-03T09:50:16.692380437Z
 DATE_FMT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
@@ -35,10 +37,10 @@ class WalutomatOrder:
     def __init__(self, **kwargs):
         submit_ts = kwargs.get('submitTs')
         if submit_ts:
-            self.submitTs = datetime.strptime(submit_ts, DATE_FMT)
+            self.submitTs = isoparse(submit_ts)
         update_ts = kwargs.get('updateTs')
         if update_ts:
-            self.updateTs = datetime.strptime(update_ts, DATE_FMT)
+            self.updateTs = isoparse(update_ts)
         obj_field_types = {field.name: field.type for field in fields(self)}
         for arg_name, arg_value in kwargs.items():
             field_type = obj_field_types.get(arg_name)
