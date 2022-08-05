@@ -67,16 +67,11 @@ class TestWalutomatTrader(TestCaseBase):
     def test_order_issuence(self):
         pair = OrderCurrencyPair(base=OrderCurrencyEnum.EUR, counter=OrderCurrencyEnum.PLN)
         result = self.trader.issue_order(OrderTypeEnum.SELL, pair, 1000, pair.base, 4.50)
-        self.assertEqual(result[0], self.order)
+        self.assertEqual(result, self.order)
 
     def test_order_canceling(self):
         self.trader.cancel(self.order.orderId)
         self.client_mock.cancel_p2p_order.assert_called_with(self.order.orderId)
-
-    def test_order_execution_status(self):
-        result = self.trader.is_order_executed(self.order.orderId)
-        self.client_mock.get_p2p_order_by_id.assert_called_with(self.order.orderId)
-        self.assertFalse(result)
 
     def test_sell_all_balance_base(self):
         base = OrderCurrencyEnum.EUR

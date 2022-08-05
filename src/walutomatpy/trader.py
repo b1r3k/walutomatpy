@@ -55,8 +55,8 @@ class WalutomatTrader:
         walutomat_order_id = self._client.submit_p2p_order(str(order_id), currency_pair, order_type, volume,
                                                            volume_currency,
                                                            price_limit)
-        orders = self.get_order_by_id(walutomat_order_id)
-        return orders
+        order = self.get_order_by_id(walutomat_order_id)
+        return order
 
     def get_account_balances(self):
         return self._client.get_account_balances()
