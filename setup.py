@@ -17,7 +17,7 @@ def read(f):
 
 
 install_requires = [
-    'pyOpenSSL >=20.0.1, <21',
+    'pyOpenSSL >=20.0.1, <24',
     'requests >=2.25.1, <3',
     'python-dateutil >=2.8.2, <3'
 ]
