@@ -1,5 +1,9 @@
 from enum import Enum, auto
 from dataclasses import dataclass
+from decimal import Decimal, getcontext
+from typing import Annotated
+
+Price = Annotated[Decimal, getcontext().prec]
 
 
 class AutoName(Enum):
@@ -49,12 +53,12 @@ class OrderCurrencyPair:
 
 @dataclass
 class Offer:
-    price: float
-    volume: float
+    price: Price
+    volume: Price
 
     def __init__(self, price, volume):
-        self.price = float(price)
-        self.volume = float(volume)
+        self.price = Decimal(price)
+        self.volume = Decimal(volume)
 
     def __str__(self):
         return f'{self.price:10.5}@{self.volume:10.6}'

@@ -1,10 +1,10 @@
 import time
 import uuid
 from decimal import Decimal
-from typing import List, Iterator
+from typing import List, Iterator, Tuple
 import math
 
-from .models.enums import OrderTypeEnum, OrderCurrencyPair, OrderCurrencyEnum
+from .models.enums import OrderTypeEnum, OrderCurrencyPair, OrderCurrencyEnum, Price
 from .models.enums import Offer
 from .models.order import WalutomatOrder
 from .models.account import AccountBalances
@@ -12,7 +12,7 @@ from . import WrappedWalutomatClient
 from .exceptions import RetryError, MissingVolume
 
 
-def get_price_by_volume(offers: List[Offer], volume) -> float:
+def get_price_by_volume(offers: List[Offer], volume) -> Price:
     """
     gets average price from list of offers
     :param offers: sorted list of offers
@@ -97,7 +97,7 @@ class WalutomatTrader:
                 return True
             time.sleep(update_delay)
 
-    def get_best_price_per_volume(self, pair: OrderCurrencyPair, volume: int, *, item_limit=10):
+    def get_best_price_per_volume(self, pair: OrderCurrencyPair, volume: int, *, item_limit=10) -> Tuple[Price, Price]:
         retry = 3
         while retry:
             bids, asks = self._client.get_p2p_best_offers_detailed(pair, item_limit)

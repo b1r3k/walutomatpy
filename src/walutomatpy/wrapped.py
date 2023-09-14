@@ -1,5 +1,3 @@
-import uuid
-from decimal import Decimal
 from typing import List, Tuple
 
 from .models.enums import Offer

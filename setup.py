@@ -42,6 +42,6 @@ setup(name='walutomatpy',
       packages=find_packages(where="src"),
       test_suite='nose.collector',
       tests_require=['nose', 'flake8', 'coverage'],
-      python_requires='>=3.6',
+      python_requires='>=3.9',
       install_requires=install_requires,
       include_package_data=True)
