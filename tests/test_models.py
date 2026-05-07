@@ -18,6 +18,13 @@ class TestWalutomatOrder(unittest.TestCase):
         pair = OrderCurrencyPair(base=OrderCurrencyEnum.EUR, counter=OrderCurrencyEnum.PLN)
         self.assertEqual(str(pair), 'EURPLN')
 
+    def test_order_currency_pair_supports_advertised_pair_strings(self):
+        pairs = [currency.value for currency in OrderCurrencyEnum if len(currency.value) == 6]
+
+        for pair in pairs:
+            with self.subTest(pair=pair):
+                self.assertEqual(str(OrderCurrencyPair(pair)), pair)
+
     def test_parsing_nanoseconds(self):
         datetime_str = '2022-08-03T09:50:16.692380437Z'
         raw_order = read_fixture('order_result.json')

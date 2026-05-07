@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from decimal import Decimal, getcontext
 from typing import Annotated
 
+from iso4217 import Currency
+
 Price = Annotated[Decimal, getcontext().prec]
 
 
@@ -25,11 +27,28 @@ class OrderTypeEnum(AutoName):
 
 
 class OrderCurrencyEnum(AutoName):
-    EUR = auto()
-    GBP = auto()
     USD = auto()
+    JPY = auto()
+    GBP = auto()
+    ZAR = auto()
+    ILS = auto()
+    NOK = auto()
+    AUD = auto()
     CHF = auto()
+    EUR = auto()
+    SGD = auto()
+    MXN = auto()
+    DKK = auto()
+    NZD = auto()
+    CAD = auto()
+    SEK = auto()
+    HUF = auto()
     PLN = auto()
+    HKD = auto()
+    CZK = auto()
+    CNY = auto()
+    TRY = auto()
+    RON = auto()
 
 
 @dataclass
