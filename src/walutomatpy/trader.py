@@ -9,7 +9,7 @@ from .models.enums import Offer
 from .models.order import WalutomatOrder
 from .models.account import AccountBalances
 from . import WrappedWalutomatClient
-from .exceptions import RetryError, MissingVolume
+from .exceptions import InsufficientMarketDepth, RetryError, MissingVolume
 
 
 def get_price_by_volume(offers: List[Offer], volume) -> Price:
@@ -99,17 +99,40 @@ class WalutomatTrader:
 
     def get_best_price_per_volume(self, pair: OrderCurrencyPair, volume: int, *, item_limit=10) -> Tuple[Price, Price]:
         retry = 3
+        attempts = retry
+        last_error = None
+        last_side = None
+        last_item_limit = item_limit
         while retry:
+            last_item_limit = item_limit
             bids, asks = self._client.get_p2p_best_offers_detailed(pair, item_limit)
             try:
                 best_bid = get_price_by_volume(bids, volume)
-                best_ask = get_price_by_volume(asks, volume)
-                return best_bid, best_ask
-            except MissingVolume:
-                # fetch 20% more orders to get enough volume
+            except MissingVolume as exc:
+                last_error = exc
+                last_side = 'bid'
                 item_limit = math.ceil(1.2 * item_limit)
                 retry -= 1
                 continue
+            try:
+                best_ask = get_price_by_volume(asks, volume)
+                return best_bid, best_ask
+            except MissingVolume as exc:
+                # fetch 20% more orders to get enough volume
+                last_error = exc
+                last_side = 'ask'
+                item_limit = math.ceil(1.2 * item_limit)
+                retry -= 1
+                continue
+        if last_error is not None:
+            raise InsufficientMarketDepth(
+                pair,
+                volume,
+                last_side,
+                last_error.missing,
+                last_item_limit,
+                attempts,
+            ) from last_error
         raise RetryError()
 
     def get_active_orders(self) -> Iterator[WalutomatOrder]:

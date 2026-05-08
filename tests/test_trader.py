@@ -10,6 +10,7 @@ from walutomatpy import AccountBalances
 from walutomatpy import WalutomatTrader
 from walutomatpy import OrderCurrencyPair, OrderCurrencyEnum, OrderTypeEnum
 from walutomatpy import Offer
+from walutomatpy.exceptions import InsufficientMarketDepth
 from walutomatpy.trader import get_price_by_volume, MissingVolume
 
 from . import read_fixture
@@ -90,6 +91,43 @@ class TestWalutomatTrader(TestCaseBase):
         self.trader.buy_all_balance(pair, base, limit)
         self.client_mock.submit_p2p_order.assert_called_with(self.UUID4, pair, OrderTypeEnum.BUY, volume_to_buy, base,
                                                              limit)
+
+    def test_best_price_per_volume_reports_insufficient_bid_depth(self):
+        pair = OrderCurrencyPair(base=OrderCurrencyEnum.EUR, counter=OrderCurrencyEnum.PLN)
+        bids = [Offer('0.36000', '100')]
+        asks = [Offer('0.37000', '10000')]
+        self.client_mock.get_p2p_best_offers_detailed.return_value = (bids, asks)
+
+        with self.assertRaises(InsufficientMarketDepth) as context:
+            self.trader.get_best_price_per_volume(pair, 10000, item_limit=25)
+
+        self.assertEqual(
+            self.client_mock.get_p2p_best_offers_detailed.call_args_list,
+            [
+                ((pair, 25),),
+                ((pair, 30),),
+                ((pair, 36),),
+            ],
+        )
+        self.assertEqual(context.exception.pair, pair)
+        self.assertEqual(context.exception.requested_volume, 10000)
+        self.assertEqual(context.exception.side, 'bid')
+        self.assertEqual(context.exception.missing_volume, Decimal('9900'))
+        self.assertEqual(context.exception.last_item_limit, 36)
+        self.assertEqual(context.exception.attempts, 3)
+        self.assertIsInstance(context.exception.__cause__, MissingVolume)
+
+    def test_best_price_per_volume_reports_insufficient_ask_depth(self):
+        pair = OrderCurrencyPair(base=OrderCurrencyEnum.EUR, counter=OrderCurrencyEnum.PLN)
+        bids = [Offer('0.36000', '10000')]
+        asks = [Offer('0.37000', '100')]
+        self.client_mock.get_p2p_best_offers_detailed.return_value = (bids, asks)
+
+        with self.assertRaises(InsufficientMarketDepth) as context:
+            self.trader.get_best_price_per_volume(pair, 10000, item_limit=25)
+
+        self.assertEqual(context.exception.side, 'ask')
+        self.assertEqual(context.exception.missing_volume, Decimal('9900'))
 
 
 class TestPricePerVolume(TestCase):
