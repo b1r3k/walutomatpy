@@ -51,3 +51,5 @@ virtualenv.py
 pip-wheel-metadata
 *.iml
 secrets/
+docs/plans/todo.md
+.worktrees
