@@ -105,12 +105,12 @@ class WalutomatTrader:
                 best_bid = get_price_by_volume(bids, volume)
                 best_ask = get_price_by_volume(asks, volume)
                 return best_bid, best_ask
-            except MissingVolume:
+            except MissingVolume as ex:
                 # fetch 20% more orders to get enough volume
                 item_limit = math.ceil(1.2 * item_limit)
                 retry -= 1
-                continue
-        raise RetryError()
+                if retry <= 0:
+                    raise ex
 
     def get_active_orders(self) -> Iterator[WalutomatOrder]:
         for order in self._client.get_p2p_active_orders():

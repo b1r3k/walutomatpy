@@ -91,6 +91,16 @@ class TestWalutomatTrader(TestCaseBase):
         self.client_mock.submit_p2p_order.assert_called_with(self.UUID4, pair, OrderTypeEnum.BUY, volume_to_buy, base,
                                                              limit)
 
+    def test_get_best_price_per_volume_reports_insufficient_market_depth(self):
+        self.client_mock.get_p2p_best_offers_detailed.side_effect = [
+            ([Offer(10, 100), Offer(20, 150), Offer(10, 200)], [Offer(10, 100), Offer(20, 150), Offer(10, 200)]),
+            ([Offer(10, 100), Offer(20, 150), Offer(10, 200)], [Offer(10, 100), Offer(20, 150), Offer(10, 200)]),
+            ([Offer(10, 100), Offer(20, 150), Offer(10, 200)], [Offer(10, 100), Offer(20, 150), Offer(10, 200)]),
+        ]
+
+        with self.assertRaises(MissingVolume):
+            self.trader.get_best_price_per_volume(OrderCurrencyPair("SEKPLN"), 10000, item_limit=25)
+
 
 class TestPricePerVolume(TestCase):
     def test_happy_path(self):
